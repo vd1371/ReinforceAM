@@ -84,7 +84,7 @@ def exec(warm_up = False,
 
 
 if __name__ == "__main__":
-	exec(warm_up = False,
+	exec(warm_up = True,
 		learning_model = A2C,
 		is_double = True,
 		n_assets = 1,

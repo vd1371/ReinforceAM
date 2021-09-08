@@ -1,4 +1,3 @@
-import ast
 import sys
 import pprint
 
@@ -21,8 +20,7 @@ class LearningObjects:
 
 		if self.warm_up:
 			# Hyperparameters
-			with open(self.base_direc + "Hyps.txt", 'r') as f:
-				hyps = ast.literal_eval(f.readlines()[0])
+			hyps = read_hyperparameters(self.base_direc)
 
 			for k, v in hyps.items():
 				setattr(self, k, v)
@@ -48,9 +46,10 @@ class LearningObjects:
 			self.with_detailed_features = params.pop("with_detailed_features", True)
 
 			self.save_hyperparameters()
+			self._log_hyperparameters()
 
 		self._construct()
-		self._log_hyperparameters()
+		
 
 	def save_hyperparameters(self):
 
@@ -67,6 +66,10 @@ class LearningObjects:
 					'bucket_size': self.bucket_size,
 					'n_sim': self.n_sim,
 					'is_double': self.is_double,
+					'with_detailed_features': self.with_detailed_features,
+					'n_states': self.n_states,
+					'n_elements': self.n_elements,
+
 					}
 		save_hyperparameters(self.base_direc, self.hyps)
 
