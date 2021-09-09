@@ -47,9 +47,9 @@ class EpisodeHolder:
 
 	def get_episode_results(self):
 
-		R_avg = interpret_history(self.rewards, self.discount_vec, divide_by_n_elements = 3)
+		R_avg = interpret_history(self.rewards, self.discount_vec, divide_by_n_elements = self.n_elements)
 		ac_avg = interpret_history(self.agency_costs, self.discount_vec)
-		uc_avg = interpret_history(self.user_costs, self.discount_vec, divide_by_n_elements = 3)
+		uc_avg = interpret_history(self.user_costs, self.discount_vec, divide_by_n_elements = self.n_elements)
 
 		return R_avg, ac_avg, uc_avg
 

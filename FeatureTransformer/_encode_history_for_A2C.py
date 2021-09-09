@@ -4,7 +4,7 @@ import tensorflow as tf
 def _encode_history_for_A2C(S_hist,
 							A_hist,
 							R_hist,
-							Q_models,
+							models,
 							gamma,
 							dim_actions):
 	'''Encoding the rewards to target values'''
@@ -15,7 +15,7 @@ def _encode_history_for_A2C(S_hist,
 		discounted_rs[id_] = discount_rewards(R_hist[id_], gamma)
 
 		# get the critic network predictions
-		critics = Q_models[id_].predict_critic_values(S_hist[id_])
+		critics = models[id_].predict_critic_values(S_hist[id_])
 
 		# Compute advantages
 		advantages[id_] = (discounted_rs[id_] - critics)

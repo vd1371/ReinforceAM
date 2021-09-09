@@ -28,13 +28,13 @@ def exec(warm_up = False,
 						max_Exp = 50000,
 						GAMMA = 0.97,
 						lr = 0.0001,
-						batch_size = 500,
+						batch_size = 1000,
 						epochs = 10,
 						t = 1,
 						eps_decay = 0.001,
 						eps = 0.5,
-						bucket_size = 5000,
-						n_sim = 1000,
+						bucket_size = 10000,
+						n_sim = 50,
 						n_states = 7*n_assets + 2, # 7*n+2 for detailed,
 						# 51 features from network + 6 for conds and ages 
 						# n_states = 51 + 6,
@@ -63,7 +63,7 @@ def exec(warm_up = False,
 
 		Run(LrnObjs, for_ = learning_model.name)
 		
-		# memory_replay(LrnObjs)
+		memory_replay(LrnObjs, for_ = learning_model.name)
 
 		LrnObjs.save_models_and_hyperparameters(i, after_each = 100)
 
@@ -86,6 +86,6 @@ def exec(warm_up = False,
 if __name__ == "__main__":
 	exec(warm_up = True,
 		learning_model = A2C,
-		is_double = True,
+		is_double = False,
 		n_assets = 1,
 		with_detailed_features = True)

@@ -3,6 +3,11 @@ np.seterr(divide='ignore', invalid='ignore')
 
 from ._evaluate_rewards import _evaluate_rewards
 
+from ._encode_age import _encode_age
+from ._encode_conditions import _encode_conditions
+from ._encode_steps import _encode_steps
+from ._encode_deviation import _encode_deviation
+
 def _encode_raw_SARS_NL_detailed(s_a_rs, valid_A = None, enough_budget = True, n_elements = 3):
 		'''encoding the features, actions, and rewards
 	
@@ -23,12 +28,12 @@ def _encode_raw_SARS_NL_detailed(s_a_rs, valid_A = None, enough_budget = True, n
 
 			if first:
 				s_temp.append(s_a_rs[id_]['remaining_budget'])
-				s_temp.append((s_a_rs[id_]['step']-10)/10)
+				s_temp.append(_encode_steps(s_a_rs[id_]['step']))
 				first = False
 
-			s_temp += list((s_a_rs[id_]['elements_age']-20)/20)
-			s_temp += list((s_a_rs[id_]['elements_conds'] - 4.5) / 4.5)
-			s_temp.append(s_a_rs[id_]['deviation'])
+			s_temp += _encode_age(s_a_rs[id_]['elements_age'])
+			s_temp += _encode_conditions(s_a_rs[id_]['elements_conds'])
+			s_temp.append(_encode_deviation(s_a_rs[id_]['deviation']))
 
 			r[id_] = _evaluate_rewards(s_a_rs, id_, n_elements, valid_A, enough_budget)
 			ac[id_] = np.sum(s_a_rs[id_]['elements_costs'])

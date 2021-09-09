@@ -38,8 +38,8 @@ def Run(LrnObjs, **params):
 			LrnObjs.validator.add_to_history(A, s_a_rs[LrnObjs.env.asset_IDs[0]]['step'])
 
 			# Checking ig there is enough budget left, and also valid Action?
-			# enough_budget = LrnObjs.env.enough_NPV_budget(A)
-			enough_budget = LrnObjs.env.enough_annual_budget(A, step)
+			enough_budget = LrnObjs.env.enough_NPV_budget(A)
+			# enough_budget = LrnObjs.env.enough_annual_budget(A, step)
 			valid_A = LrnObjs.validator.is_valid()
 
 			# Taking the action on a network and finding next s_a_rs
@@ -68,7 +68,6 @@ def Run(LrnObjs, **params):
 		R_avg, ac_avg, uc_avg = LrnObjs.episode_holder.get_episode_results()
 		LrnObjs.sim_results_holder.update_averages(R_avg, ac_avg, uc_avg)
 
-
 		if for_ == "A2C":
 			# Encode SARs
 			onehot_encoded_actions, advantages, discounted_rs = \
@@ -94,7 +93,7 @@ def Run(LrnObjs, **params):
 														nextS_hist,
 														LrnObjs)
 
-			partial_fit_DQN(LrnObjs, S_hist, targets)
+			# partial_fit_DQN(LrnObjs, S_hist, targets)
 
 			# Adding to the buckets
 			LrnObjs.buckets.add_sr(S_hist, targets)

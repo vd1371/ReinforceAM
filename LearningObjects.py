@@ -45,10 +45,9 @@ class LearningObjects:
 			self.dim_actions = params.pop("dim_actions", 4)
 			self.with_detailed_features = params.pop("with_detailed_features", True)
 
-			self.save_hyperparameters()
-			self._log_hyperparameters()
-
+		self.save_hyperparameters()
 		self._construct()
+		self._log_hyperparameters()
 		
 
 	def save_hyperparameters(self):
@@ -62,14 +61,14 @@ class LearningObjects:
 					't': self.t,
 					'eps_decay' : self.eps_decay,
 					'eps' : self.eps,
-					'n_trained' : self.n_trained,
 					'bucket_size': self.bucket_size,
 					'n_sim': self.n_sim,
+					'n_trained' : self.n_trained,
 					'is_double': self.is_double,
-					'with_detailed_features': self.with_detailed_features,
 					'n_states': self.n_states,
 					'n_elements': self.n_elements,
-
+					'dim_actions': self.dim_actions,
+					'with_detailed_features': self.with_detailed_features,
 					}
 		save_hyperparameters(self.base_direc, self.hyps)
 

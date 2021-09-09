@@ -1,6 +1,7 @@
 import numpy as np
 
 from ._evaluate_rewards import _evaluate_rewards
+from ._develop_array_of_states import _develop_array_of_states
 
 def _encode_raw_SARS_PL(s_a_rs, valid_A = None, enough_budget = True, n_elements = 3):
 		'''encoding the features, actions, and rewards
@@ -17,11 +18,8 @@ def _encode_raw_SARS_PL(s_a_rs, valid_A = None, enough_budget = True, n_elements
 		ac = {} # agency costs
 		for id_ in s_a_rs:
 
-			s_temp = list((s_a_rs[id_]['elements_age']-20)/20)
-			s_temp += list((s_a_rs[id_]['elements_conds'] - 4.5) / 4.5)
-			s_temp.append(s_a_rs[id_]['remaining_budget'])
-			s_temp.append((s_a_rs[id_]['step']-10)/10)
-			s_temp.append(s_a_rs[id_]['deviation'])
+			s_temp = []
+			s_temp = _develop_array_of_states(s_temp, s_a_rs[id_])
 
 			s[id_] = [s_temp,
 						s_temp,

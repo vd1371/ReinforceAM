@@ -61,4 +61,7 @@ class ActionsValidator:
 
 			elements_validation.append(valid)
 
+		print (mrr_decimal)
+		print (elements_validation)
+
 		return elements_validation

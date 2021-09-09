@@ -1,7 +1,7 @@
-def memory_replay(LrnObjs):
+def memory_replay(LrnObjs, for_):
 
 	# Memory replay
-	if LrnObjs.buckets.is_ready():
+	if not for_ == 'A2C' and LrnObjs.buckets.is_ready():
 
 		LrnObjs.logger.info ("Starting to do memory replay...")
 		for j, id_ in enumerate(LrnObjs.buckets.IDs):
