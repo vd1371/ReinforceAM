@@ -39,8 +39,8 @@ class A2C(BaseModel):
 		for ne in range(self.n_elements):
 
 			inputs = Input(shape=(self.n_states,))
-			common = Dense(30, activation="relu")(inputs)
-			common = Dense(30, activation="relu")(common)
+			common = Dense(30, activation="relu", kernel_regularizer = l2(0.000001))(inputs)
+			common = Dense(30, activation="relu", kernel_regularizer = l2(0.000001))(common)
 			action = Dense(self.dim_actions, activation="softmax")(common)
 			# critic = Dense(1, activation = 'linear')(common)
 

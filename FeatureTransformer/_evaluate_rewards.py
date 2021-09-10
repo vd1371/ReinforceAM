@@ -2,6 +2,8 @@ import numpy as np
 
 def _evaluate_rewards(s_a_rs, id_, n_elements, valid_A, enough_budget):
 
+	raise ValueError ("This was updated. Do not use it")
+
 	# R = s_a_rs[id_]['elements_utils']/ \
 	# 				(s_a_rs[id_]['elements_costs']+ \
 	# 					s_a_rs[id_]['user_costs'])**0.2

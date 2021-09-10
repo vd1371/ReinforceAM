@@ -1,7 +1,13 @@
 #Loading dependencies
+import numpy as np
 from ._get_actions import get_actions
-from ._partial_fit_A2C import partial_fit_A2C
-from ._partial_fit_DQN import partial_fit_DQN
+
+from LearningModels import partial_fit_DQN
+from LearningModels import partial_fit_A2C
+
+from FeatureTransformer import calculate_rewards
+from FeatureTransformer import get_average_of_rewards
+from FeatureTransformer import calculate_penalties
 
 def Run(LrnObjs, **params):
 
@@ -32,15 +38,11 @@ def Run(LrnObjs, **params):
 			A = get_actions(S = S,
 							LrnObjs = LrnObjs,
 							step = step,
-							fixed_plan = fixed_plan)
+							fixed_plan = fixed_plan,
+							for_ = for_)
 		
 			# for validation
 			LrnObjs.validator.add_to_history(A, s_a_rs[LrnObjs.env.asset_IDs[0]]['step'])
-
-			# Checking ig there is enough budget left, and also valid Action?
-			enough_budget = LrnObjs.env.enough_NPV_budget(A)
-			# enough_budget = LrnObjs.env.enough_annual_budget(A, step)
-			valid_A = LrnObjs.validator.is_valid()
 
 			# Taking the action on a network and finding next s_a_rs
 			s_a_rs = LrnObjs.env.step(A)
@@ -50,23 +52,30 @@ def Run(LrnObjs, **params):
 			step = s_a_rs[LrnObjs.env.asset_IDs[0]]['step']
 
 			# Getting the reward and next state, also costs
-			nextS, R, ac, uc = \
-				LrnObjs.ft.encode_raw_SARS(s_a_rs,
-												valid_A,
-												enough_budget,
-												LrnObjs.n_elements)
+			nextS, ut, ac, uc = \
+				LrnObjs.ft.encode_raw_SARS(s_a_rs, LrnObjs.n_elements)
 
 			# Updating the episode holder or sim_ana
-			LrnObjs.episode_holder.add(S, A, R, ac, uc, nextS)
+			LrnObjs.episode_holder.add(S, A, ut, ac, uc, nextS)
 
 			S = nextS
 
 		# Getting the states, actions, and rewards of all assets in the life cycle
-		S_hist, A_hist, R_hist, nextS_hist, ac, uc = LrnObjs.episode_holder.get()
-		LrnObjs.sim_results_holder.update_histogram(A_hist, ac, uc)
+		S_hist, A_hist, ut_hist, \
+			nextS_hist, ac_hist, uc_hist = LrnObjs.episode_holder.get()
+		LrnObjs.sim_results_holder.update_histogram(LrnObjs.episode_holder)
 
-		R_avg, ac_avg, uc_avg = LrnObjs.episode_holder.get_episode_results()
-		LrnObjs.sim_results_holder.update_averages(R_avg, ac_avg, uc_avg)
+		R_hist = calculate_rewards(LrnObjs)
+		P_hist = calculate_penalties(LrnObjs)
+		R_avg = get_average_of_rewards(R_hist, P_hist, LrnObjs)
+
+
+		# print (for_, i)
+		# print ("uc", uc_hist[10][0][8])
+		# print ("ac", ac_hist[10][0][8])
+		# print ("ut", ut_hist[10][0][8])
+		# print ("R", R_hist[10][0][8])
+		# print ("P", P_hist[10][0][8])
 
 		if for_ == "A2C":
 			# Encode SARs
@@ -74,9 +83,8 @@ def Run(LrnObjs, **params):
 				LrnObjs.ft.encode_history_for_A2C(S_hist,
 													A_hist,
 													R_hist,
-													LrnObjs.models,
-													LrnObjs.GAMMA,
-													LrnObjs.dim_actions)
+													P_hist,
+													LrnObjs)
 
 			partial_fit_A2C(LrnObjs, S_hist, onehot_encoded_actions,
 										advantages, discounted_rs)
@@ -88,15 +96,20 @@ def Run(LrnObjs, **params):
 		elif for_ in ['DuelingDQN', 'DQN', 'SGD', 'SGDReg']:
 			# Finding the targets
 			targets = LrnObjs.ft.encode_history_for_QLrn(S_hist,
-														A_hist,
-														R_hist,
-														nextS_hist,
-														LrnObjs)
+															A_hist,
+															R_hist,
+															P_hist,
+															nextS_hist,
+															LrnObjs)
 
-			# partial_fit_DQN(LrnObjs, S_hist, targets)
+			partial_fit_DQN(LrnObjs, S_hist, targets)
 
 			# Adding to the buckets
 			LrnObjs.buckets.add_sr(S_hist, targets)
+
+		# Updating the average for finding simulation results
+		ac_discounted, uc_discounted = LrnObjs.episode_holder.get_episode_results()
+		LrnObjs.sim_results_holder.update_averages(R_avg, ac_discounted, uc_discounted)
 
 		# Restarting and refreshing the holders and validator
 		LrnObjs.validator.reset_for_each_cycle()

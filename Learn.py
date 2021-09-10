@@ -10,8 +10,7 @@ from RLUtils import *
 from LearningModels import *
 from LearningObjects import LearningObjects
 from FindBaseLines import find_baselines, optimal_plan
-
-
+from LifeCycleRun import Run
 
 def exec(warm_up = False,
 		learning_model = DQN,
@@ -25,7 +24,7 @@ def exec(warm_up = False,
 						n_assets,
 						learning_model = learning_model,
 						Exp = 0,
-						max_Exp = 50000,
+						max_Exp = 10000,
 						GAMMA = 0.97,
 						lr = 0.0001,
 						batch_size = 1000,
@@ -34,7 +33,7 @@ def exec(warm_up = False,
 						eps_decay = 0.001,
 						eps = 0.5,
 						bucket_size = 10000,
-						n_sim = 50,
+						n_sim = 100,
 						n_states = 7*n_assets + 2, # 7*n+2 for detailed,
 						# 51 features from network + 6 for conds and ages 
 						# n_states = 51 + 6,
@@ -50,7 +49,6 @@ def exec(warm_up = False,
 	R_opt, ac_opt, uc_opt = Run(LrnObjs,
 								for_ = "SimOpt",
 								fixed_plan = fixed_plan)
-	# R_opt, ac_opt, uc_opt = 1140, 0, 0
 
 	print (f"Opt: R:{R_opt:.2f} | AC:{ac_opt:.2f} | UC:{uc_opt:.2f}")
 	print ("Results of fixed plan are calculated")
@@ -71,7 +69,7 @@ def exec(warm_up = False,
 									after_each = 100,
 									for_ = learning_model.name)
 
-		LrnObjs.update_eps(i, after_each = 10)
+		LrnObjs.update_eps(i, after_each = 5)
 
 		previous_time = MonitorLearning(i, LrnObjs, Run,
 										R_opt, ac_opt, uc_opt,
@@ -84,7 +82,7 @@ def exec(warm_up = False,
 
 
 if __name__ == "__main__":
-	exec(warm_up = True,
+	exec(warm_up = False,
 		learning_model = A2C,
 		is_double = False,
 		n_assets = 1,

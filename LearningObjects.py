@@ -1,5 +1,6 @@
 import sys
 import pprint
+import numpy as np
 
 from RLUtils import *
 from FeatureTransformer import FeatureTransformer
@@ -12,16 +13,20 @@ class LearningObjects:
 	def __init__(self, base_direc, n_assets, **params):
 
 		self.warm_up = params.pop("warm_up", False)
-
 		self.base_direc = base_direc
 		self.n_assets = n_assets
-
 		self.learning_model = params.pop("learning_model", None)
+
+		self.logger = Logger(address = self.base_direc + "Log.log")
+		self.settings = GeneralSettings()
+
+		self.discount_vec = \
+			np.exp(np.arange(0, self.settings.n_steps*self.settings.dt, self.settings.dt) * \
+				(-self.settings.discount_rate))
 
 		if self.warm_up:
 			# Hyperparameters
 			hyps = read_hyperparameters(self.base_direc)
-
 			for k, v in hyps.items():
 				setattr(self, k, v)
 
@@ -40,14 +45,15 @@ class LearningObjects:
 			self.n_sim = params.pop("n_sim", 1000)
 			self.n_trained = params.pop("n_trained", 0)
 			self.is_double = params.pop("is_double", False)
-			self.n_states = params.pop("n_states", 9)
-			self.n_elements = params.pop("n_elements", 3)
-			self.dim_actions = params.pop("dim_actions", 4)
+			self.n_states = params.pop("n_states")
+			self.n_elements = self.settings.n_elements
+			self.dim_actions = self.settings.dim_actions
 			self.with_detailed_features = params.pop("with_detailed_features", True)
 
 		self.save_hyperparameters()
 		self._construct()
 		self._log_hyperparameters()
+
 		
 
 	def save_hyperparameters(self):
@@ -74,8 +80,6 @@ class LearningObjects:
 
 	def _construct(self):
 		
-		self.logger = Logger(address = self.base_direc + "Log.log")
-		self.settings = GeneralSettings()
 		self.env = IndianaEnv(**self.__dict__)
 
 		if not self.learning_model is None:
@@ -85,7 +89,7 @@ class LearningObjects:
 			self.target_models = ModelsHolder(should_warm_up = True, **self.__dict__)
 			self.buckets = Buckets(**self.__dict__)
 			self.episode_holder = EpisodeHolder(**self.__dict__)
-			self.learning_vals_holder = LearningValsHolder(self.base_direc)
+			self.learning_vals_holder = LearningValsHolder(self.base_direc, should_warm_up = self.warm_up)
 			self.sim_results_holder = SimResultsHolder(**self.__dict__)
 
 	def _log_hyperparameters(self):

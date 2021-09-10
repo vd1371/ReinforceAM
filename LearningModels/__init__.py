@@ -5,3 +5,5 @@ from ._A2C import A2C
 from ._ModelsHolder import ModelsHolder
 from ._memory_replay import memory_replay
 from ._DuelingDQN import DuelingDQN
+from ._partial_fit_A2C import partial_fit_A2C
+from ._partial_fit_DQN import partial_fit_DQN

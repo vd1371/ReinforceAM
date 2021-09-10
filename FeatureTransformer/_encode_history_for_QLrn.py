@@ -7,6 +7,7 @@ from ._get_SARS_for_step import get_SARS_for_step
 def _encode_history_for_QLrn(S_hist,
 				A_hist,
 				R_hist,
+				P_hist,
 				nextS_hist,
 				LrnObjs):
 		'''Encoding the rewards to target values
@@ -62,14 +63,15 @@ def _encode_history_for_QLrn(S_hist,
 
 			for step in range(LrnObjs.settings.n_steps):
 
-				S_at_step, R_at_step, A_at_step, nextS_at_step = \
-					get_SARS_for_step(S_hist, R_hist, A_hist, nextS_hist,
+				S_at_step, R_at_step, P_at_step, A_at_step, nextS_at_step = \
+					get_SARS_for_step(S_hist, R_hist, P_hist,
+											A_hist, nextS_hist,
 											id_, step, LrnObjs.n_elements)
 
 
 
 				if step == LrnObjs.settings.n_steps - 1:
-					discounted_r = R_at_step
+					discounted_r = R_at_step + P_at_step
 					target = np.zeros((LrnObjs.n_elements, LrnObjs.dim_actions))
 
 				else:
@@ -82,7 +84,7 @@ def _encode_history_for_QLrn(S_hist,
 					else:
 						Q = _evaluate_Q_for_vanilla_Q_learning(id_, nextS_at_step, LrnObjs)
 
-					discounted_r = R_at_step + LrnObjs.GAMMA * Q
+					discounted_r = R_at_step + P_at_step + LrnObjs.GAMMA * Q
 
 				target[np.arange(LrnObjs.n_elements), A_at_step] = discounted_r
 

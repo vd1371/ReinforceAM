@@ -34,7 +34,9 @@ class SimResultsHolder:
 		self.ac_histogram = {id_: np.zeros((self.n_elements, self.n_steps)) for id_ in self.IDs}
 		self.uc_histogram = {id_: np.zeros((self.n_elements, self.n_steps)) for id_ in self.IDs}
 
-	def update_histogram(self, actions, agency_costs, user_costs):
+	def update_histogram(self, episode_holder):
+
+		_, actions, _, _, agency_costs, user_costs = episode_holder.get()
 
 		for id_ in self.IDs:
 			for ne in range(self.n_elements):

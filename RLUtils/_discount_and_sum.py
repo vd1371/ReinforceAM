@@ -1,7 +1,7 @@
 # Loading dependencies
 import numpy as np
 
-def interpret_history(vals, discount_vec, divide_by_n_elements = None):
+def discount_and_sum(vals, discount_vec, divide_by_n_elements = None):
 	
 	new_val = 0
 	for id_ in vals.keys():

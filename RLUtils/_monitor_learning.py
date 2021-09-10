@@ -11,7 +11,8 @@ def MonitorLearning(i, LrnObjs, Run, R_opt, ac_opt, uc_opt, start, previus_time,
 					f"Mdl: R:{R_avg_mdl:.2f}, AC:{ac_avg_mdl:.2f}, UC:{uc_avg_mdl:.2f} | "
 					f"Opt: R:{R_opt:.2f}, AC:{ac_opt:.2f}, UC:{uc_opt:.2f} | "
 					f"In {time.time() - previus_time:.2f} secs | "
-					f"Total time: {time.time()-start:.2f} | ")
+					f"Total time: {time.time()-start:.2f} | "
+					f"Epsilon: {LrnObjs.eps:.2f}")
 
 		LrnObjs.learning_vals_holder.keep(i, R_avg_mdl, ac_avg_mdl, uc_avg_mdl)
 		LrnObjs.learning_vals_holder.save()

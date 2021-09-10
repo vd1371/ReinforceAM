@@ -26,12 +26,15 @@ class ActionsValidator:
 
 	def reset_for_each_cycle(self):
 		self.A_hist_assets = {id_: np.zeros((self.n_elements, self.n_steps)) for id_ in self.IDs}
+		self.A_valid_hist = {id_: np.zeros((self.n_elements, self.n_steps)) for id_ in self.IDs}
 
 	def add_to_history(self, A, step):
 
 		for id_ in A:
 			for elem in range(self.n_elements):
 				self.A_hist_assets[id_][elem][step] = A[id_][elem]
+
+			self.A_valid_hist[id_][:, step] = self.is_mrr_valid(self.A_hist_assets[id_])
 
 	def is_valid(self):
 
@@ -60,8 +63,5 @@ class ActionsValidator:
 				valid = not (any(np.array(elem_mrr[:-1]) * np.array(elem_mrr[1:])) > 0)
 
 			elements_validation.append(valid)
-
-		print (mrr_decimal)
-		print (elements_validation)
 
 		return elements_validation

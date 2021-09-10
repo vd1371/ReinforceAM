@@ -1,6 +1,5 @@
 from .AwesomeLogger import Logger
 from ._buckets import Buckets
-from ._LifeCycleRun import Run
 from ._EpisodeHolder import EpisodeHolder
 from ._save_hyperparameters import save_hyperparameters
 from ._config import GeneralSettings
@@ -11,3 +10,4 @@ from ._SimulationResultsHolder import SimResultsHolder
 from ._monitor_learning import MonitorLearning
 from ._load_fixed_plan_from import load_fixed_plan_from
 from ._read_hyperparameters import read_hyperparameters
+from ._discount import discount

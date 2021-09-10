@@ -22,7 +22,7 @@ class Logger(object):
                 level = logging.DEBUG,
                 console_level = logging.DEBUG,
                 file_level = logging.DEBUG,
-                mode = 'a'):
+                mode = 'w'):
 
         super(Logger, self).__init__()
         if not Logger.instance:
