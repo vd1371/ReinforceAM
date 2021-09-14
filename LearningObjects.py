@@ -45,16 +45,15 @@ class LearningObjects:
 			self.n_sim = params.pop("n_sim", 1000)
 			self.n_trained = params.pop("n_trained", 0)
 			self.is_double = params.pop("is_double", False)
-			self.n_states = params.pop("n_states")
+			self.n_states = params.pop("n_states", 2)
 			self.n_elements = self.settings.n_elements
 			self.dim_actions = self.settings.dim_actions
-			self.with_detailed_features = params.pop("with_detailed_features", True)
+			self.with_detailed_features = params.pop("with_detailed_features", False)
+			self.n_jobs = params.pop("n_jobs", 1)
 
 		self.save_hyperparameters()
 		self._construct()
 		self._log_hyperparameters()
-
-		
 
 	def save_hyperparameters(self):
 
@@ -75,6 +74,7 @@ class LearningObjects:
 					'n_elements': self.n_elements,
 					'dim_actions': self.dim_actions,
 					'with_detailed_features': self.with_detailed_features,
+					'n_jobs': self.n_jobs,
 					}
 		save_hyperparameters(self.base_direc, self.hyps)
 
@@ -104,8 +104,9 @@ class LearningObjects:
 	def update_target_models(self, experience = 0,
 									after_each = 100,
 									for_ = "DQN"):
-		if experience % after_each == 0:
-				self.target_models.copy_from(self.models)
+		if not for_ == 'A2C':
+			if experience % after_each == 0:
+					self.target_models.copy_from(self.models)
 
 	def update_hyperparameters(self, **params):
 

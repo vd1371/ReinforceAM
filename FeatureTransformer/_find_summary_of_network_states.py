@@ -22,6 +22,7 @@ def _find_summary_of_network_states(s_a_rs, n_elements):
 	devs = pd.DataFrame(np.array(devs))
 
 	s_common = []
+	
 	s_common += ages.describe().iloc[1:, :].values.flatten().tolist()
 	s_common += conds.describe().iloc[1:, :].values.flatten().tolist()
 	s_common += devs.describe().iloc[1:, :].values.flatten().tolist()

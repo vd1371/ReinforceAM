@@ -1,6 +1,7 @@
 import numpy as np
 import pprint
 import joblib
+from copy import deepcopy
 
 class MCMRRHolder:
 
@@ -38,4 +39,5 @@ class MCMRRHolder:
 		self._convert_mrrs_to_list()
 		joblib.dump(self.all_mrrs, self.base_direc + "FixedPlans.json")
 		self.logger.info(pprint.pformat(self.all_mrrs))
-		self.reset()
+
+		return self.all_mrrs

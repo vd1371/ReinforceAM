@@ -36,13 +36,13 @@ class SimResultsHolder:
 
 	def update_histogram(self, episode_holder):
 
-		_, actions, _, _, agency_costs, user_costs = episode_holder.get()
+		_, actions, _, _, agency_costs, user_costs, _ = episode_holder.get()
 
 		for id_ in self.IDs:
 			for ne in range(self.n_elements):
 				for step in range(self.n_steps):
 
-					action = actions[id_][ne][step]
+					action = int(actions[id_][ne][step])
 					self.A_histogram[id_][ne][step][action] += 1
 					self.ac_histogram[id_][ne][step] += agency_costs[id_][ne][step]
 					self.uc_histogram[id_][ne][step] += user_costs[id_][ne][step]

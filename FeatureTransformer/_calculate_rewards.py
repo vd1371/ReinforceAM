@@ -3,7 +3,7 @@ from RLUtils import discount
 
 def calculate_rewards(LrnObjs):
 
-	S_hist, _, ut_hist, _, ac_hist, uc_hist = LrnObjs.episode_holder.get()
+	S_hist, _, ut_hist, _, ac_hist, uc_hist, _ = LrnObjs.episode_holder.get()
 
 	enough_budget = LrnObjs.env.remaining_npv_budget > 0
 	valid_A = LrnObjs.validator.is_valid()

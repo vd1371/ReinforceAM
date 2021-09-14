@@ -51,4 +51,6 @@ def GreedyIUCParallel(LearningObjects, base_direc, n_assets):
 	for worker in pool:
 		worker.join()
 	
-	mrr_holders.get_baseline()
+	actions = mrr_holders.get_baseline()
+
+	return actions

@@ -23,7 +23,7 @@ class EpisodeHolder:
 
 		self.states, self.utilities, self.actions, self.next_states = {}, {}, {}, {}
 		self.agency_costs, self.user_costs = {}, {}
-		self.remaining_npv_budget = []
+		self.enough_annual_budget = []
 
 		for id_ in self.IDs:
 
@@ -34,7 +34,7 @@ class EpisodeHolder:
 			self.user_costs[id_] = [[] for _ in range(self.n_elements)]
 			self.next_states[id_] = [[] for _ in range(self.n_elements)]
 
-	def add(self, S, A, ut, ac, uc, nextS):
+	def add(self, S, A, ut, ac, uc, nextS, enough_annual_budget):
 
 		for id_ in self.IDs:
 			for ne in range (self.n_elements):
@@ -44,6 +44,8 @@ class EpisodeHolder:
 				self.agency_costs[id_][ne].append(ac[id_][ne])
 				self.user_costs[id_][ne].append(uc[id_])
 				self.next_states[id_][ne].append(nextS[id_][ne])
+
+		self.enough_annual_budget.append(enough_annual_budget)
 
 	def get_episode_results(self):
 
@@ -58,4 +60,4 @@ class EpisodeHolder:
 
 	def get(self):
 		return self.states, self.actions, self.utilities, self.next_states, \
-						self.agency_costs, self.user_costs
+						self.agency_costs, self.user_costs, self.enough_annual_budget

@@ -9,6 +9,8 @@ from FeatureTransformer import calculate_rewards
 from FeatureTransformer import get_average_of_rewards
 from FeatureTransformer import calculate_penalties
 
+import time
+
 def Run(LrnObjs, **params):
 
 	buckets = params.pop('buckets', None)
@@ -33,6 +35,8 @@ def Run(LrnObjs, **params):
 		episode_done = False
 		step = 0
 
+		start = time.time()
+
 		while not episode_done:
 
 			A = get_actions(S = S,
@@ -45,7 +49,7 @@ def Run(LrnObjs, **params):
 			LrnObjs.validator.add_to_history(A, s_a_rs[LrnObjs.env.asset_IDs[0]]['step'])
 
 			# Taking the action on a network and finding next s_a_rs
-			s_a_rs = LrnObjs.env.step(A)
+			s_a_rs, en_ann_bdgt = LrnObjs.env.step(A)
 
 			# Is it done?
 			episode_done = s_a_rs[LrnObjs.env.asset_IDs[0]]['done']
@@ -56,26 +60,19 @@ def Run(LrnObjs, **params):
 				LrnObjs.ft.encode_raw_SARS(s_a_rs, LrnObjs.n_elements)
 
 			# Updating the episode holder or sim_ana
-			LrnObjs.episode_holder.add(S, A, ut, ac, uc, nextS)
+			LrnObjs.episode_holder.add(S, A, ut, ac, uc, nextS, en_ann_bdgt)
 
 			S = nextS
 
 		# Getting the states, actions, and rewards of all assets in the life cycle
 		S_hist, A_hist, ut_hist, \
-			nextS_hist, ac_hist, uc_hist = LrnObjs.episode_holder.get()
+			nextS_hist, ac_hist, uc_hist, \
+				_ = LrnObjs.episode_holder.get()
 		LrnObjs.sim_results_holder.update_histogram(LrnObjs.episode_holder)
 
 		R_hist = calculate_rewards(LrnObjs)
 		P_hist = calculate_penalties(LrnObjs)
 		R_avg = get_average_of_rewards(R_hist, P_hist, LrnObjs)
-
-
-		# print (for_, i)
-		# print ("uc", uc_hist[10][0][8])
-		# print ("ac", ac_hist[10][0][8])
-		# print ("ut", ut_hist[10][0][8])
-		# print ("R", R_hist[10][0][8])
-		# print ("P", P_hist[10][0][8])
 
 		if for_ == "A2C":
 			# Encode SARs

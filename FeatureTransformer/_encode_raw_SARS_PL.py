@@ -1,7 +1,6 @@
 import numpy as np
 
 from ._develop_array_of_states import _develop_array_of_states
-from ._evaluate_utils import _evaluate_utils
 
 def _encode_raw_SARS_PL(s_a_rs, n_elements = 3):
 		'''encoding the features, actions, and rewards

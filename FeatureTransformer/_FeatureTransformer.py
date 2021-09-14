@@ -15,7 +15,6 @@ class FeatureTransformer:
 			return _encode_raw_SARS_PL(*args, **kwargs)
 
 		else:
-			raise ValueError ("There was a problem with R definition, solve it for the network level as well")
 			if self.with_detailed_features:
 				return _encode_raw_SARS_NL_detailed(*args, **kwargs)
 

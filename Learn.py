@@ -14,9 +14,10 @@ from LifeCycleRun import Run
 
 def exec(warm_up = False,
 		learning_model = DQN,
+		should_find_baselines = True,
 		is_double = False,
 		n_assets = 1,
-		with_detailed_features = True):
+		with_detailed_features = False):
 	
 	print ("Learning started")
 	base_direc, report_direc = create_path(__file__, learning_model.name)
@@ -33,27 +34,25 @@ def exec(warm_up = False,
 						eps_decay = 0.001,
 						eps = 0.5,
 						bucket_size = 10000,
-						n_sim = 100,
-						n_states = 7*n_assets + 2, # 7*n+2 for detailed,
+						n_sim = 10,
+						# n_states = 7*n_assets + 2, # 7*n+2 for detailed,
 						# 51 features from network + 6 for conds and ages 
-						# n_states = 51 + 6,
+						n_states = 49 + 7,
 						warm_up = warm_up,
 						is_double = is_double,
-						with_detailed_features = with_detailed_features)
+						with_detailed_features = with_detailed_features,
+						n_jobs = 2)
 
 	# Simulating for the fixed plan
-	# find_baselines(n_assets, "GAbyRF")
+	fixed_plan = find_baselines(n_assets, "GAbyRF", should_find_baselines)
 	# fixed_plan = load_fixed_plan_from(report_direc, "GAbyRF")
-	fixed_plan = optimal_plan()
-
+	# fixed_plan = optimal_plan()
 	R_opt, ac_opt, uc_opt = Run(LrnObjs,
 								for_ = "SimOpt",
 								fixed_plan = fixed_plan)
 
 	print (f"Opt: R:{R_opt:.2f} | AC:{ac_opt:.2f} | UC:{uc_opt:.2f}")
 	print ("Results of fixed plan are calculated")
-
-	print ("Fixed plan is calculated now")
 
 	# Creating
 	start, previous_time = time.time(), time.time()
@@ -75,15 +74,19 @@ def exec(warm_up = False,
 										R_opt, ac_opt, uc_opt,
 										start, previous_time)
 
-		# print (f"Experience {i} is analyzed in {time.time()-previous_time:.2f}")
+		print (f"Experience {i} is analyzed in {time.time()-previous_time:.2f}")
 
 	print ("Done")
 
 
 
 if __name__ == "__main__":
+
+	os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 	exec(warm_up = False,
+		should_find_baselines = True,
 		learning_model = A2C,
 		is_double = False,
-		n_assets = 1,
-		with_detailed_features = True)
+		n_assets = 10,
+		with_detailed_features = False)
