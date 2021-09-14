@@ -2,9 +2,6 @@
 import numpy as np
 from ._get_actions import get_actions
 
-from LearningModels import partial_fit_DQN
-from LearningModels import partial_fit_A2C
-
 from FeatureTransformer import calculate_rewards
 from FeatureTransformer import get_average_of_rewards
 from FeatureTransformer import calculate_penalties
@@ -83,7 +80,7 @@ def Run(LrnObjs, **params):
 													P_hist,
 													LrnObjs)
 
-			partial_fit_A2C(LrnObjs, S_hist, onehot_encoded_actions,
+			LrnObjs.partial_fit_A2C(LrnObjs, S_hist, onehot_encoded_actions,
 										advantages, discounted_rs)
 
 			# Adding to buckets for memory replay
@@ -99,7 +96,7 @@ def Run(LrnObjs, **params):
 															nextS_hist,
 															LrnObjs)
 
-			partial_fit_DQN(LrnObjs, S_hist, targets)
+			LrnObjs.partial_fit_DQN(LrnObjs, S_hist, targets)
 
 			# Adding to the buckets
 			LrnObjs.buckets.add_sr(S_hist, targets)

@@ -1,1 +1,0 @@
-from ._SimulationResultsHolder import SimResultsHolder

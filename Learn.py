@@ -7,10 +7,10 @@ import numpy as np
 sys.path.append('../GIAMS/')
 
 from RLUtils import *
-from LearningModels import *
-from LearningObjects import LearningObjects
-from FindBaseLines import find_baselines, optimal_plan
+from ModelsAndLearning import *
+from FindBaseLines import *
 from LifeCycleRun import Run
+from LearningObjects import *
 
 def exec(warm_up = False,
 		learning_model = DQN,
@@ -34,17 +34,19 @@ def exec(warm_up = False,
 						eps_decay = 0.001,
 						eps = 0.5,
 						bucket_size = 10000,
-						n_sim = 10,
-						# n_states = 7*n_assets + 2, # 7*n+2 for detailed,
+						n_sim = 100,
+						n_states = 7*n_assets + 2, # 7*n+2 for detailed,
 						# 51 features from network + 6 for conds and ages 
-						n_states = 49 + 7,
+						# n_states = 49 + 7,
 						warm_up = warm_up,
 						is_double = is_double,
-						with_detailed_features = with_detailed_features,
-						n_jobs = 2)
+						with_detailed_features = with_detailed_features)
 
 	# Simulating for the fixed plan
-	fixed_plan = find_baselines(n_assets, "GAbyRF", should_find_baselines)
+	fixed_plan = find_baselines(n_assets,
+								"GAbyRF",
+								should_find_baselines,
+								base_direc)
 	# fixed_plan = load_fixed_plan_from(report_direc, "GAbyRF")
 	# fixed_plan = optimal_plan()
 	R_opt, ac_opt, uc_opt = Run(LrnObjs,
@@ -60,7 +62,7 @@ def exec(warm_up = False,
 
 		Run(LrnObjs, for_ = learning_model.name)
 		
-		memory_replay(LrnObjs, for_ = learning_model.name)
+		LrnObjs.memory_replay(LrnObjs, for_ = learning_model.name)
 
 		LrnObjs.save_models_and_hyperparameters(i, after_each = 100)
 
@@ -86,7 +88,7 @@ if __name__ == "__main__":
 
 	exec(warm_up = False,
 		should_find_baselines = True,
-		learning_model = A2C,
+		learning_model = DQN,
 		is_double = False,
-		n_assets = 10,
+		n_assets = 1,
 		with_detailed_features = False)
