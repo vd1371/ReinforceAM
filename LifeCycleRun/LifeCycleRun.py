@@ -8,6 +8,8 @@ from FeatureTransformer import calculate_penalties
 
 import time
 
+from multiprocessing import Process, Queue
+
 def Run(LrnObjs, **params):
 
 	buckets = params.pop('buckets', None)
@@ -80,12 +82,17 @@ def Run(LrnObjs, **params):
 													P_hist,
 													LrnObjs)
 
-			LrnObjs.partial_fit_A2C(LrnObjs, S_hist, onehot_encoded_actions,
-										advantages, discounted_rs)
+			LrnObjs.partial_fit_A2C(LrnObjs,
+									S_hist,
+									onehot_encoded_actions,
+									advantages,
+									discounted_rs)
 
 			# Adding to buckets for memory replay
-			LrnObjs.buckets.add_saar(S_hist, onehot_encoded_actions,
-											advantages, discounted_rs)
+			LrnObjs.buckets.add_saar(S_hist,
+									onehot_encoded_actions,
+									advantages,
+									discounted_rs)
 
 		elif for_ in ['DuelingDQN', 'DQN', 'SGD', 'SGDReg']:
 			# Finding the targets
@@ -116,3 +123,18 @@ def Run(LrnObjs, **params):
 	LrnObjs.sim_results_holder.refresh()
 
 	return R_avg, ac_avg, uc_avg
+
+def partial_fit_A2C_for_parallel(model,
+									s_hist,
+									encoded_action,
+									advantages,
+									discounted_rs):
+
+	model.partial_fit_actor(s_hist,
+							encoded_actions,
+							advantages)
+	model.partial_fit_critic(s_hist,
+							discounted_rs)
+
+	
+
