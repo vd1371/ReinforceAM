@@ -3,13 +3,15 @@ import pprint
 import numpy as np
 
 from RLUtils import *
+from ModelsAndLearning import *
 from FeatureTransformer import FeatureTransformer
 from LifeCycleRun import ActionsValidator
 from LifeCycleRun import SimResultsHolder
 from LifeCycleRun import EpisodeHolder
 from LifeCycleRun import LearningValsHolder
 
-from ModelsAndLearning import *
+from ._save_hyperparameters import save_hyperparameters
+from ._find_n_states import find_n_states
 
 from RLEnvs import IndianaEnv
 
@@ -50,16 +52,18 @@ class LearningObjects:
 			self.n_sim = params.pop("n_sim", 1000)
 			self.n_trained = params.pop("n_trained", 0)
 			self.is_double = params.pop("is_double", False)
-			self.n_states = params.pop("n_states", 2)
 			self.n_elements = self.settings.n_elements
 			self.dim_actions = self.settings.dim_actions
 			self.with_detailed_features = params.pop("with_detailed_features", False)
-			self.n_jobs = params.pop("n_jobs", 1)
+			self.n_states = find_n_states(self.n_assets,
+										self.with_detailed_features)
 
 		self.save_hyperparameters()
 		self._construct()
 		self._log_hyperparameters()
-		self.assign_learning_functions()
+
+	def _log_hyperparameters(self):
+		self.logger.info(pprint.pformat(self.hyps))
 
 	def save_hyperparameters(self):
 
@@ -79,8 +83,7 @@ class LearningObjects:
 					'n_states': self.n_states,
 					'n_elements': self.n_elements,
 					'dim_actions': self.dim_actions,
-					'with_detailed_features': self.with_detailed_features,
-					'n_jobs': self.n_jobs,
+					'with_detailed_features': self.with_detailed_features
 					}
 		save_hyperparameters(self.base_direc, self.hyps)
 
@@ -91,15 +94,10 @@ class LearningObjects:
 		if not self.learning_model is None:
 			self.ft = FeatureTransformer(**self.__dict__)
 			self.validator = ActionsValidator(**self.__dict__)
-			self.models = ModelsHolder(should_warm_up = self.warm_up, **self.__dict__)
-			self.target_models = ModelsHolder(should_warm_up = True, **self.__dict__)
 			self.buckets = Buckets(**self.__dict__)
 			self.episode_holder = EpisodeHolder(**self.__dict__)
 			self.learning_vals_holder = LearningValsHolder(self.base_direc, should_warm_up = self.warm_up)
 			self.sim_results_holder = SimResultsHolder(**self.__dict__)
-
-	def _log_hyperparameters(self):
-		self.logger.info(pprint.pformat(self.hyps))
 
 	def update_eps(self, experience, after_each):
 
@@ -107,36 +105,16 @@ class LearningObjects:
 			self.t += self.eps_decay
 			self.eps = 0.5 / (self.t + self.eps_decay)
 
-	def update_target_models(self, experience = 0,
-									after_each = 100,
-									for_ = "DQN"):
-		if not for_ == 'A2C':
-			if experience % after_each == 0:
-					self.target_models.copy_from(self.models)
-
 	def update_hyperparameters(self, **params):
 
 		for k, v in params.items():
 			if hasattr(self, k):
 				setattr(self, k, v)
 			else:
-				raise ValueError ("a key has a typo and does not exists among "
+				raise ValueError (f"a key --{k} has a typo and does not exists among "
 									"the class attributes")
 
-	def save_models_and_hyperparameters(self, experience, after_each):
-		if experience % after_each == 0:
-
-			n_trained = self.models.save_all()
-
-			self.save_hyperparameters()
-
-			self.update_hyperparameters(n_trained = n_trained,
-											Exp = experience)
-
-	def assign_learning_functions(self):
-		self.partial_fit_A2C = partial_fit_A2C
-		self.partial_fit_DQN = partial_fit_DQN
-		self.memory_replay = memory_replay
-
-
-
+	def save_and_update_hyperparameters(self, experience, n_trained):
+		self.update_hyperparameters(n_trained = n_trained,
+										Exp = experience)
+		self.save_hyperparameters()

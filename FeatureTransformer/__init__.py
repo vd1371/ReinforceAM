@@ -1,4 +1,3 @@
 from ._FeatureTransformer import FeatureTransformer
 from ._calculate_rewards import calculate_rewards
-from ._get_average_of_rewards import get_average_of_rewards
 from ._calculate_penalties import calculate_penalties

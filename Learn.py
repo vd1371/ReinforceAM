@@ -12,6 +12,8 @@ from FindBaseLines import *
 from LifeCycleRun import Run
 from LearningObjects import *
 
+import time
+
 def exec(warm_up = False,
 		learning_model = DQN,
 		should_find_baselines = True,
@@ -28,44 +30,60 @@ def exec(warm_up = False,
 						max_Exp = 10000,
 						GAMMA = 0.97,
 						lr = 0.0001,
-						batch_size = 1000,
+						batch_size = 100,
 						epochs = 10,
 						t = 1,
 						eps_decay = 0.001,
 						eps = 0.5,
-						bucket_size = 10000,
+						bucket_size = 1000,
 						n_sim = 10,
-						# n_states = 7*n_assets + 2, # 7*n+2 for detailed,
-						# 51 features from network + 6 for conds and ages 
-						n_states = 49 + 7,
 						warm_up = warm_up,
 						is_double = is_double,
 						with_detailed_features = with_detailed_features,
 						n_jobs = 10)
 
-	R_opt, ac_opt, uc_opt = show_baseline("GAbyRF", should_find_baselines, LrnObjs, Run)
+	# models_holder = ModelsHolder(should_warm_up = warm_up,
+	# 								**LrnObjs.__dict__)
 
+	if learning_model.name == "A2C":
+		target_models_holder = None
+	else:
+		target_models_holder = ModelsHolder(should_warm_up = True,
+									**LrnObjs.__dict__)
+
+	models_holder = RemoteModelsManager(LrnObjs)
+
+	R_opt, ac_opt, uc_opt = \
+			show_baseline("GAbyRF", should_find_baselines, LrnObjs, Run)
 	start, previous_time = time.time(), time.time()
-	for i in range(int(LrnObjs.Exp), int(LrnObjs.max_Exp)):
+	for exp in range(int(LrnObjs.Exp), int(LrnObjs.max_Exp)):
 
-		Run(LrnObjs, for_ = learning_model.name)
+		Run(LrnObjs,
+			models_holder = models_holder,
+			target_models_holder = target_models_holder,
+			for_ = learning_model.name)
 		
-		LrnObjs.memory_replay(LrnObjs, for_ = learning_model.name)
+		memory_replay(LrnObjs,
+						for_ = learning_model.name,
+						models_holder = models_holder)
 
-		LrnObjs.save_models_and_hyperparameters(i, after_each = 100)
+		checkpoint(exp,
+			LrnObjs,
+			models_holder,
+			target_models_holder,
+			for_= learning_model.name,
+			checkpoint_freq = 10)
 
-		LrnObjs.update_target_models(i,
-									after_each = 100,
-									for_ = learning_model.name)
+		LrnObjs.update_eps(exp, after_each = 5)
 
-		LrnObjs.update_eps(i, after_each = 5)
-
-		previous_time = monitor_learning(i, LrnObjs, Run,
+		previous_time = monitor_learning(exp,
+										LrnObjs, Run, models_holder,
 										R_opt, ac_opt, uc_opt,
 										start, previous_time)
 
-		print (f"Experience {i} is analyzed in {time.time()-previous_time:.2f}")
+		print (f"Experience {exp} is analyzed in {time.time()-previous_time:.2f}")
 
+	models_holder.shutdown_servers()
 	print ("Done")
 
 
@@ -78,5 +96,5 @@ if __name__ == "__main__":
 		should_find_baselines = True,
 		learning_model = A2C,
 		is_double = False,
-		n_assets = 10,
+		n_assets = 2,
 		with_detailed_features = False)

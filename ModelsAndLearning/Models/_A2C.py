@@ -87,7 +87,7 @@ class A2C(BaseModel):
 			critic_value = self.models_for_elements[ne]['critic'](np.atleast_2d(X[ne]), training = False).numpy()
 			critic_values.append(np.squeeze(critic_value))
 
-		return critic_values
+		return np.array(critic_values)
 
 	def partial_fit_actor(self, X, Y, advantages, *args, **kwargs):
 		'''Fitting'''
