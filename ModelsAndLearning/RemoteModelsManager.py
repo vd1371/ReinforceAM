@@ -8,8 +8,8 @@ class RemoteModelsManager:
 	def __init__(self, MasterLrnObjs):
 		self.MasterLrnObjs = MasterLrnObjs
 
-		self.ports = create_ports(self.MasterLrnObjs)
-		self.servers_processes = kick_off_servers(self.ports,
+		self.ports_of_groups = create_ports(self.MasterLrnObjs)
+		self.servers_processes = kick_off_servers(self.ports_of_groups,
 												**self.MasterLrnObjs.__dict__)
 
 	def predict_actions_for_all(self, S, eps = 0):

@@ -8,3 +8,4 @@ from ._get_average_of_rewards import get_average_of_rewards
 from .monitor_learning import monitor_learning
 from ._create_path import create_path
 from ._checkpoint import checkpoint
+from ._create_models_holder import create_models_holder

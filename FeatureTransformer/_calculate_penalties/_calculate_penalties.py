@@ -18,8 +18,12 @@ def calculate_penalties(LrnObjs):
 	if LrnObjs.n_assets == 1:
 		P_hist = _consider_npv_budget(P_hist, S_hist, LrnObjs, penalty_val)
 	else:
-		P_hist = _consider_annual_budget(P_hist, enough_annual_budget, LrnObjs, penalty_val)
-	P_hist = _consider_usefulness(P_hist, ut_hist, uc_hist, A_hist, LrnObjs, penalty_val)
+		P_hist = _consider_annual_budget(P_hist,
+										enough_annual_budget,
+										LrnObjs, penalty_val)
+	
+	P_hist = _consider_usefulness(P_hist, ut_hist, uc_hist,
+									A_hist, LrnObjs, penalty_val)
 
 	return P_hist
 			

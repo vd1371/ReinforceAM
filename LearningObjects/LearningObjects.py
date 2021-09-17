@@ -12,6 +12,7 @@ from LifeCycleRun import LearningValsHolder
 
 from ._save_hyperparameters import save_hyperparameters
 from ._find_n_states import find_n_states
+from ._create_group_of_ids_for_servers import create_group_of_ids_for_servers
 
 from RLEnvs import IndianaEnv
 
@@ -54,9 +55,11 @@ class LearningObjects:
 			self.is_double = params.pop("is_double", False)
 			self.n_elements = self.settings.n_elements
 			self.dim_actions = self.settings.dim_actions
-			self.with_detailed_features = params.pop("with_detailed_features", False)
+			self.with_detailed_features = params.pop("with_detailed_features",
+																		False)
 			self.n_states = find_n_states(self.n_assets,
 										self.with_detailed_features)
+			self.n_jobs = params.pop("n_jobs", 1)
 
 		self.save_hyperparameters()
 		self._construct()
@@ -96,8 +99,10 @@ class LearningObjects:
 			self.validator = ActionsValidator(**self.__dict__)
 			self.buckets = Buckets(**self.__dict__)
 			self.episode_holder = EpisodeHolder(**self.__dict__)
-			self.learning_vals_holder = LearningValsHolder(self.base_direc, should_warm_up = self.warm_up)
+			self.learning_vals_holder = LearningValsHolder(self.base_direc,
+											should_warm_up = self.warm_up)
 			self.sim_results_holder = SimResultsHolder(**self.__dict__)
+			self.group_of_ids = create_group_of_ids_for_servers(**self.__dict__)
 
 	def update_eps(self, experience, after_each):
 
@@ -118,3 +123,6 @@ class LearningObjects:
 		self.update_hyperparameters(n_trained = n_trained,
 										Exp = experience)
 		self.save_hyperparameters()
+
+		
+

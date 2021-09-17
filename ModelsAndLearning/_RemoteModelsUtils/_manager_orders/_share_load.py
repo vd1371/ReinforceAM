@@ -5,9 +5,12 @@ from ._make_request import _make_request
 
 import time
 
+from multiprocessing import Process, Queue
+
 def share_load(ports, payloads):
 
 	q_out = queue.Queue()
+	# q_out = Queue()
 
 	pool = []
 	for ide_, port in ports.items():
@@ -16,6 +19,10 @@ def share_load(ports, payloads):
 		
 		worker = threading.Thread(target = _make_request,
 									args = (port, payload, q_out,))
+
+		# worker = Process(target = _make_request,
+		# 							args = (port, payload, q_out,))
+
 		worker.start()
 		pool.append(worker)
 

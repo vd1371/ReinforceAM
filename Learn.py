@@ -19,7 +19,8 @@ def exec(warm_up = False,
 		should_find_baselines = True,
 		is_double = False,
 		n_assets = 1,
-		with_detailed_features = False):
+		with_detailed_features = False,
+		n_jobs = 10):
 	
 	print ("Learning started")
 	base_direc, report_direc = create_path(__file__, learning_model.name)
@@ -41,17 +42,8 @@ def exec(warm_up = False,
 						is_double = is_double,
 						with_detailed_features = with_detailed_features,
 						n_jobs = 10)
-
-	# models_holder = ModelsHolder(should_warm_up = warm_up,
-	# 								**LrnObjs.__dict__)
-
-	if learning_model.name == "A2C":
-		target_models_holder = None
-	else:
-		target_models_holder = ModelsHolder(should_warm_up = True,
-									**LrnObjs.__dict__)
-
-	models_holder = RemoteModelsManager(LrnObjs)
+	
+	models_holde = create_models_holder(n_jobs, warm_up, LrnObjs)
 
 	R_opt, ac_opt, uc_opt = \
 			show_baseline("GAbyRF", should_find_baselines, LrnObjs, Run)
@@ -90,11 +82,12 @@ def exec(warm_up = False,
 
 if __name__ == "__main__":
 
-	os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+	# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"9
 
 	exec(warm_up = False,
 		should_find_baselines = True,
 		learning_model = A2C,
 		is_double = False,
-		n_assets = 2,
+		n_assets = 100,
+		n_jobs = 10,
 		with_detailed_features = False)
