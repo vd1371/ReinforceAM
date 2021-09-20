@@ -35,7 +35,7 @@ def Run(LrnObjs,
 							fixed_plan = fixed_plan,
 							for_ = for_,
 							models_holder = models_holder)
-		
+
 			# for validation
 			step_before_A = s_a_rs[LrnObjs.env.asset_IDs[0]]['step']
 			LrnObjs.validator.add_to_history(A, step_before_A)

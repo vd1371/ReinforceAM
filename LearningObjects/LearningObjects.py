@@ -102,7 +102,7 @@ class LearningObjects:
 			self.learning_vals_holder = LearningValsHolder(self.base_direc,
 											should_warm_up = self.warm_up)
 			self.sim_results_holder = SimResultsHolder(**self.__dict__)
-			self.group_of_ids = create_group_of_ids_for_servers(**self.__dict__)
+			self.groups_of_ids = create_group_of_ids_for_servers(**self.__dict__)
 
 	def update_eps(self, experience, after_each):
 

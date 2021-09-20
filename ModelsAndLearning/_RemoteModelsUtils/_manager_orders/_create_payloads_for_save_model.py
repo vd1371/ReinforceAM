@@ -1,9 +1,9 @@
-import json
+import ujson
 
-def _create_payloads_for_save_model(ports):
+def _create_payloads_for_save_model(ports_of_groups):
 
 	payloads = {}
-	for id_ in ports.keys():
-		payloads[id_] = {"order": "save_model"}
+	for group in ports_of_groups.keys():
+		payloads[group] = ujson.dumps({"order": "save_model"})
 
 	return payloads

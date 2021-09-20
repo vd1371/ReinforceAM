@@ -15,6 +15,7 @@ def create_group_of_ids_for_servers(**params):
 		start_idx = job * segment_length
 		end_idx = min(len(ids), (job+1)*segment_length)
 
-		group_of_ids[f'group{job}'] = ids[start_idx: end_idx]
+		ids_of_group = [int(val) for val in ids[start_idx: end_idx]]
+		group_of_ids[f'group{job}'] = ids_of_group
 
 	return group_of_ids

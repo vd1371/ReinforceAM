@@ -6,7 +6,7 @@ def create_ports(MasterLrnObjs):
 
 	ports_of_groups = {}
 
-	for group in MasterLrnObjs.group_of_ids:
+	for group in MasterLrnObjs.groups_of_ids:
 
 		port_open = False
 		while not port_open:

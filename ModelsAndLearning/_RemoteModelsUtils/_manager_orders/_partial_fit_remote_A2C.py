@@ -3,18 +3,20 @@ from ._share_load import share_load
 
 from ._create_payloads_for_fit_remote_A2C import _create_payloads_for_fit_remote_A2C
 
-def partial_fit_remote_A2C(ports,
+def partial_fit_remote_A2C(ports_of_groups,
+							groups_of_ids,
 							S_hist,
 							onehot_encoded_actions,
 							advantages,
 							discounted_rs):
 
-	payloads = _create_payloads_for_fit_remote_A2C(ports,
+	payloads = _create_payloads_for_fit_remote_A2C(ports_of_groups,
+													groups_of_ids,
 													S_hist,
 													onehot_encoded_actions,
 													advantages,
 													discounted_rs)
 
-	results = share_load(ports, payloads)
+	results = share_load(ports_of_groups, payloads, groups_of_ids)
 	
 	return results

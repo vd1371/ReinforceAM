@@ -41,9 +41,10 @@ def exec(warm_up = False,
 						warm_up = warm_up,
 						is_double = is_double,
 						with_detailed_features = with_detailed_features,
-						n_jobs = 10)
-	
-	models_holde = create_models_holder(n_jobs, warm_up, LrnObjs)
+						n_jobs = n_jobs)
+
+	models_holder, target_models_holder = \
+		create_models_holder(n_jobs, warm_up, LrnObjs)
 
 	R_opt, ac_opt, uc_opt = \
 			show_baseline("GAbyRF", should_find_baselines, LrnObjs, Run)
@@ -88,6 +89,6 @@ if __name__ == "__main__":
 		should_find_baselines = True,
 		learning_model = A2C,
 		is_double = False,
-		n_assets = 100,
-		n_jobs = 10,
+		n_assets = 130,
+		n_jobs = 2,
 		with_detailed_features = False)

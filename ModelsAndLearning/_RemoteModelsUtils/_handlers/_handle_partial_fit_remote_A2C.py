@@ -2,24 +2,21 @@ import ast
 import ujson
 import numpy as np
 
-def handle_partial_fit_remote_A2C(server, query_components):
+def handle_partial_fit_remote_A2C(server, post_data):
 
-	id_ = server.info['id_']
-	S_hist = ujson.loads(query_components['S_hist'][0])
+	S_hist = post_data['S_hist']
 	onehot_encoded_actions = \
-			ujson.loads(query_components['onehot_encoded_actions'][0])
-	advantages = ujson.loads(query_components['advantages'][0])
-	discounted_rs = ujson.loads(query_components['discounted_rs'][0])
+			post_data['onehot_encoded_actions']
+	advantages = post_data['advantages']
+	discounted_rs = post_data['discounted_rs']
 
-	onehot_encoded_actions = np.array(onehot_encoded_actions)
-	advantages = np.array(advantages)
-	discounted_rs = np.array(discounted_rs)
+	for id_ in server.info['ids']:
 
+		server.models[id_].partial_fit_actor(S_hist[str(id_)],
+										np.array(onehot_encoded_actions[str(id_)]),
+										np.array(advantages[str(id_)]))
 
-	server.model.partial_fit_actor(S_hist,
-									onehot_encoded_actions,
-									advantages)
-	server.model.partial_fit_critic(S_hist,
-									discounted_rs)
+		server.models[id_].partial_fit_critic(S_hist[str(id_)],
+										np.array(discounted_rs[str(id_)]))
 
 	return "".encode()

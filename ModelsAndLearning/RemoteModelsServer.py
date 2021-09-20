@@ -1,5 +1,6 @@
 import ast
 import json
+import ujson
 import os
 
 from http.server import HTTPServer
@@ -16,7 +17,7 @@ learning_models_dict = {
 
 def create_agent_server(info):
 
-	info = json.loads(info)
+	info = ujson.loads(info)
 	port = info['port']
 
 	server_address = ("localhost", port)

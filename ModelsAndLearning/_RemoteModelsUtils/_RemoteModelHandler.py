@@ -1,4 +1,4 @@
-import json
+import ujson
 
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import urlparse
@@ -18,23 +18,26 @@ class RemoteModelHandler(BaseHTTPRequestHandler):
 		self.send_header('Content-type', 'text/html')
 		self.end_headers()
 
-	def do_GET(self):
+	def do_POST(self):
 		self._set_response()
-		query_components = parse_qs(urlparse(self.path).query)
+		# query_components = parse_qs(urlparse(self.path).query)
 
-		order = query_components['order'][0]
+		content_length = int(self.headers['Content-Length'])
+		post_data = self.rfile.read(content_length)
+		post_data = ujson.loads(post_data)
 
+		order = post_data['order']
 		if order == "save_model":
-			response = handle_save_model_order(self.server, query_components)
+			response = handle_save_model_order(self.server, post_data)
 
 		elif order == "predict_actions_for_all":
 			response = handle_predict_actions_for_all_order(self.server,
-															query_components)
+															post_data)
 		elif order == "predict_critics":
-			response = handle_predict_critics_order(self.server, query_components)
+			response = handle_predict_critics_order(self.server, post_data)
 
 		elif order == "partial_fit_A2C":
-			response = handle_partial_fit_remote_A2C(self.server, query_components)
+			response = handle_partial_fit_remote_A2C(self.server, post_data)
 
 		self.wfile.write(response)
 		self.wfile.flush()
@@ -42,7 +45,7 @@ class RemoteModelHandler(BaseHTTPRequestHandler):
 	def log_message(self, format, *args):
 		return
 
-	def do_POST(self):
+	def do_GET(self):
 
 		content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
 		post_data = self.rfile.read(content_length) # <--- Gets the data itself
