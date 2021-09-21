@@ -37,7 +37,7 @@ def exec(warm_up = False,
 						eps_decay = 0.001,
 						eps = 0.5,
 						bucket_size = 1000,
-						n_sim = 10,
+						n_sim = 100,
 						warm_up = warm_up,
 						is_double = is_double,
 						with_detailed_features = with_detailed_features,
@@ -46,8 +46,11 @@ def exec(warm_up = False,
 	models_holder, target_models_holder = \
 		create_models_holder(n_jobs, warm_up, LrnObjs)
 
+	quit()
+
 	R_opt, ac_opt, uc_opt = \
 			show_baseline("GAbyRF", should_find_baselines, LrnObjs, Run)
+
 	start, previous_time = time.time(), time.time()
 	for exp in range(int(LrnObjs.Exp), int(LrnObjs.max_Exp)):
 
@@ -65,7 +68,7 @@ def exec(warm_up = False,
 			models_holder,
 			target_models_holder,
 			for_= learning_model.name,
-			checkpoint_freq = 10)
+			checkpoint_freq = 100)
 
 		LrnObjs.update_eps(exp, after_each = 5)
 
@@ -89,6 +92,6 @@ if __name__ == "__main__":
 		should_find_baselines = True,
 		learning_model = A2C,
 		is_double = False,
-		n_assets = 130,
+		n_assets = 4700,
 		n_jobs = 2,
 		with_detailed_features = False)

@@ -86,7 +86,9 @@ class LearningObjects:
 					'n_states': self.n_states,
 					'n_elements': self.n_elements,
 					'dim_actions': self.dim_actions,
-					'with_detailed_features': self.with_detailed_features
+					'with_detailed_features': self.with_detailed_features,
+					'n_jobs': self.n_jobs
+
 					}
 		save_hyperparameters(self.base_direc, self.hyps)
 

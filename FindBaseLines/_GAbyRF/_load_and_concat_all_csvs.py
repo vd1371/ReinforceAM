@@ -1,10 +1,10 @@
 import os
 import pandas as pd
 
-def _load_and_concat_all_csvs(direc, N = -1):
+def _load_and_concat_all_csvs(direc):
 
 	holder = []
-	files = os.listdir(direc) if N is None else os.listdir(direc)[:N]
+	files = os.listdir(direc) if N is None else os.listdir(direc)[:]
 
 	for file_name in files:
 		df = pd.read_csv(direc + "/" + file_name, index_col = 0)
