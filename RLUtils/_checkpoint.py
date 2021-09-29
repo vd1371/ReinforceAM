@@ -8,9 +8,9 @@ def checkpoint(experience,
 				checkpoint_freq = 100):
 
 
-	if experience % checkpoint_freq == 0:
+	if experience > 0 and experience % checkpoint_freq == 0:
 
-		print (f"Trying to save models at experience{experience}")
+		print (f"Trying to save models at experience {experience}")
 		n_trained = models_holder.save_all()
 		LrnObjs.save_and_update_hyperparameters(experience, n_trained)
 

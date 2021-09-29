@@ -4,6 +4,7 @@ import queue
 from ._make_request import _make_request
 
 import time
+import gc
 
 def share_load(ports_of_groups,
 				payloads,
@@ -30,5 +31,7 @@ def share_load(ports_of_groups,
 	if parallel:
 		for worker in pool:
 			worker.join()
+
+	import gc
 
 	return q_out

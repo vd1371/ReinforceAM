@@ -46,10 +46,10 @@ def exec(warm_up = False,
 	models_holder, target_models_holder = \
 		create_models_holder(n_jobs, warm_up, LrnObjs)
 
-	quit()
-
 	R_opt, ac_opt, uc_opt = \
 			show_baseline("GAbyRF", should_find_baselines, LrnObjs, Run)
+
+	# R_opt, ac_opt, uc_opt = 100, 100, 100
 
 	start, previous_time = time.time(), time.time()
 	for exp in range(int(LrnObjs.Exp), int(LrnObjs.max_Exp)):
@@ -86,12 +86,12 @@ def exec(warm_up = False,
 
 if __name__ == "__main__":
 
-	# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"9
+	os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-	exec(warm_up = False,
+	exec(warm_up = True,
 		should_find_baselines = True,
 		learning_model = A2C,
 		is_double = False,
-		n_assets = 4700,
-		n_jobs = 2,
+		n_assets = 36,
+		n_jobs = 6,
 		with_detailed_features = False)

@@ -25,6 +25,8 @@ def create_agent_server(info):
 
 	server = bind_model_to_server(server, info, learning_models_dict)
 
+	print (f"Models are binded for port {port}")
+
 	server.serve_forever()
 
 

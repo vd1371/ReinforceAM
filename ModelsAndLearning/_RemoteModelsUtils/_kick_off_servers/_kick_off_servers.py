@@ -37,7 +37,7 @@ def kick_off_servers(ports, **params):
 
 		servers_processes[group] = p
 
-	time.sleep(len(groups_of_ids))
+	time.sleep(30)
 	print ("Servers are up now")
 
 	return servers_processes
